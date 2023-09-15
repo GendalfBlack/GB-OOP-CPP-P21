@@ -1,0 +1,12 @@
+**/Debug/**
+*.sln 
+*.vcxproj 
+*.vcxproj.filters 
+*.vcxproj.user 
+**.vs/** 
+**/Debug/** 
+*.sln 
+*.vcxproj 
+*.vcxproj.filters 
+*.vcxproj.user 
+**/.vs/** 
