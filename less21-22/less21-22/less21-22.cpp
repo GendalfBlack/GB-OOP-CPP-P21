@@ -49,13 +49,59 @@ public:
             e->next = e2;
         }
     }
+
+    Element* find(int v) {
+        Element* current = begin;
+        while (current->next != nullptr) { if (current->value == v) { return current; } current = current->next; }
+        return nullptr;
+    }
+
+    int index(int v) {
+        Element* current = begin;
+        int i = 0;
+        while (current->next != nullptr) { 
+            if (current->value == v) { return i;} i++; current = current->next;
+        }
+        return -1;
+    }
+
+    void remove(int v) {
+        if (begin->value == v)
+        {
+            Element* link = begin->next;
+            delete begin;
+            begin = link;
+            return;
+        }
+        Element* current = begin;
+        while (current->next != nullptr) { 
+            if (current->next->value == v) 
+            { 
+                Element* link = current->next->next;
+                delete current->next;
+                current->next = link;
+                return;
+            } 
+            current = current->next; 
+        }
+    }
+
+    void pop() {
+        Element* current = begin;
+        while (current->next != nullptr) 
+        { 
+            current = current->next; 
+        }
+        delete current->next;
+        current->next = nullptr;
+    }
+
     void print() {
         Element* current = begin;
-        while (current != nullptr)
-        {
+        while (current->next->next != nullptr) { 
             cout << current->value;
-            current = current->next;
-        };
+            current = current->next; 
+        }
     }
 };
 int main()
