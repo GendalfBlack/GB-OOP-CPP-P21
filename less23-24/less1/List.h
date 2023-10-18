@@ -1,23 +1,21 @@
-#include <iostream>
-#include <Windows.h>
+#pragma once
 using namespace std;
-
-template <typename Uliana>
+template <class T>
 class Element {
 public:
-    Uliana value;
-    Element* next;
-    Element* prev;
+    T value;
+    Element<T>* next;
+    Element<T>* prev;
     Element() : value(0), next(nullptr), prev(nullptr) { }
-    Element(Uliana v) : value(v), next(nullptr), prev(nullptr) { }
+    Element(T v) : value(v), next(nullptr), prev(nullptr) { }
 };
 
-template <typename T>
-class DoubleLinkedList {
-public:
+template <class T>
+class List {
     Element<T>* begin;
     Element<T>* end;
-    DoubleLinkedList() : begin(nullptr), end(nullptr) {}
+public:
+    List() : begin(nullptr), end(nullptr) {}
     void append(T val) {
         Element<T>* new_el = new Element<T>(val);
         if (end == nullptr) { begin = new_el; end = new_el; return; }
@@ -216,29 +214,3 @@ public:
         }
     }
 };
-
-int main()
-{
-    DoubleLinkedList<int>* l = new DoubleLinkedList<int>();
-    l->append(1);
-    l->print();
-    // Задача 1. Використати клас списку, та створити список цілих чисел на 10 
-    // елементів, та відобразити їх на екран
-
-    // Задача 2. Надати вибір користувачу та видалити елемент за значенням за його
-    // бажанням
-
-    // Задача 3. Надати вибір користувачу та видалити елемент за його 
-    // місцезнаходженням
-
-    // Задача 4. Надати користувачу можливість додати новий елемент
-    // в кінець списку. 
-
-    // Задача 5. Надати користувачу можливість додати новий елемент
-    // на початок списку
-
-    // Задача 6. Надати користувачу можливіть додати новий елемент після 
-    // першого елемента що вказав користувач. 
-
-    // Задача 7. Відсортувати список за зростанням.
-}
