@@ -1,4 +1,6 @@
 #pragma once
+#include <Windows.h>
+using namespace std;
 #include "Interface.h"
 #include "Level.h"
 #include "Inventory.h"
