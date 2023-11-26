@@ -10,20 +10,20 @@ public:
 	}
 	void Run() {
 		srand(time(0));
-		Area a1(99, 24, '.', full_symbol);
+		Area a1(99, 23, ' ', full_symbol);
 		a1.Move(1, 1);
 		a1.Draw();
 		Table r(99, 1, 6, 4);
 		Sprite* sprites = new Sprite[11];
 		int g = 0;
-		Sprite player(" o \n-+-\n ^");
+		Sprite player(" o \n-+-\n ^ ");
 		player.ReadColors("\3\3\3\3\3\3\3\3\3\3");
 		player.Move(10, 10);
 		sprites[g] = player;
 		for (int i = 0; i < 10; i++)
 		{
-			uint8_t rx = rand() % (99-3) + 3;
-			uint8_t ry = rand() % 24 + 1;
+			uint8_t rx = rand() % (98-3) + 3;
+			uint8_t ry = rand() % 23 + 1;
 			Sprite s(",,,");
 			s.ReadColors("\2\2\2");
 			s.Move(rx, ry);

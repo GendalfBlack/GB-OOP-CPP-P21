@@ -19,7 +19,6 @@ public:
 	int8_t w;
 	int8_t h;
 	int8_t order;
-	void Print() { SetConsoleCursorPosition(Render::hdl, { x, y }); }
 	virtual void Draw() { throw "Calling virtual method Draw() from \"Element\""; }
 	void Move(int8_t _x, int8_t _y) { x = _x; y = _y; }
 };
@@ -46,7 +45,7 @@ public:
 			if (*begin == '\n') { i = 0; max_h++; }
 			i++;
 		}
-		w = max_w; h = max_h;
+		w = max_w + 1; h = max_h;
 	}
 	virtual void ReadColors(const char* _colors) {
 		colors = Strcpy(_colors);
@@ -57,6 +56,7 @@ public:
 		{
 			for (int j = 0; j < w; j++)
 			{
+				if (image[n] == '\n' || image[n] == '\0') { n++; continue; }
 				Render::buffer[(y + i) * W_WIDTH + (x + j)] = ' ';
 				Render::color[(y + i) * W_WIDTH + (x + j)] = 7;
 				n++;
@@ -64,18 +64,17 @@ public:
 		}
 	}
 	void Draw() override {
-		Print();
 		int n = 0; 
 		for (int i = 0; i < h; i++)
 		{
 			for (int j = 0; j < w; j++)
 			{
+				if (image[n] == '\n' || image[n] == '\0') { n++; continue; }
 				Render::buffer[(y + i) * W_WIDTH + (x + j)] = image[n]; 
 				Render::color[(y + i) * W_WIDTH + (x + j)] = colors[n];
 				n++;
 			}
 		}
-		SetConsoleTextAttribute(Render::hdl, 7);
 	}
 };
 
@@ -87,18 +86,18 @@ public:
 	Label(const char* _text, char _border) : Sprite(_text), text(image), border(_border) { }
 	void Draw() {
 		if (border != ' ') {
-			for (int8_t i = 0; i < w + 2; i++) {
+			for (int8_t i = 0; i < w + 1; i++) {
 				Render::buffer[(y - 1) * W_WIDTH + (x - 1 + i)] = border;
 				Render::color[(y - 1) * W_WIDTH + (x - 1 + i)] = colors[0];
-				Render::buffer[(y - 1 + h) * W_WIDTH + (x - 1 + i)] = border;
-				Render::color[(y - 1 + h) * W_WIDTH + (x - 1 + i)] = colors[0];
+				Render::buffer[(y + h) * W_WIDTH + (x - 1 + i)] = border;
+				Render::color[(y + h) * W_WIDTH + (x - 1 + i)] = colors[0];
 			}
-			for (int8_t i = 0; i < h; i++) {
+			for (int8_t i = 0; i < h + 1; i++) {
 				Render::buffer[(y - 1 + i) * W_WIDTH + (x - 1)] = border;
 				Render::color[(y - 1 + i) * W_WIDTH + (x - 1)] = colors[0];
 
-				Render::buffer[(y - 1 + i) * W_WIDTH + (x - 1 + w + 1)] = border;
-				Render::color[(y - 1 + i) * W_WIDTH + (x - 1 + w + 1)] = colors[0];
+				Render::buffer[(y - 1 + i) * W_WIDTH + (x + w - 1)] = border;
+				Render::color[(y - 1 + i) * W_WIDTH + (x + w - 1)] = colors[0];
 			}
 		}
 		Sprite::Draw();
@@ -200,7 +199,7 @@ public:
 			for (int i = 0; i < _columns; i++)
 			{
 				Label empty("...\n...\n...", full_symbol);
-				empty.ReadColors("\7");
+				empty.ReadColors("\7\7\7 \7\7\7 \7\7\7");
 				empty.Move(_x + (item_size + 1) * i, _y + (item_size + 1) * j);
 				empty.Draw();
 			}
