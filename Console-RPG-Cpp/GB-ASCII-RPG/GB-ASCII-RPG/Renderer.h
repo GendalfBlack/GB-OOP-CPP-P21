@@ -1,6 +1,6 @@
 #pragma once
-#define W_WIDTH 120
-#define W_HEIGHT 30
+#define W_WIDTH 118
+#define W_HEIGHT 29
 
 static class Render {
 public:
@@ -24,12 +24,18 @@ public:
 			color_last[n] = 7;
 		}
 	}
-	static void Start() { }
-	static void Loop() {
+	static void Start() { 
 		for (int n = 0; n < W_HEIGHT * W_WIDTH; n++)
 		{
-			if (buffer[n] != last[n] && color[n]!= color_last[n]) {
-				SetConsoleCursorPosition(hdl, { int16_t(n%W_WIDTH), int16_t(n/W_HEIGHT) });
+			SetConsoleTextAttribute(hdl, color[n]);
+			cout << buffer[n];
+		}
+	}
+	static void Update() {
+		for (int n = 0; n < W_HEIGHT * W_WIDTH; n++)
+		{
+			if (buffer[n] != last[n] || color[n]!= color_last[n]) {
+				SetConsoleCursorPosition(hdl, { int16_t(n%W_WIDTH), int16_t(n / W_WIDTH) });
 				SetConsoleTextAttribute(hdl, color[n]);
 				cout << buffer[n];
 			}
