@@ -30,16 +30,24 @@ public:
 	char* colors = nullptr;
 	Sprite(const char* _image) {
 		if (_image == nullptr) { throw "Image for constructor Sprite was nullptr!"; }
+		image = Strcpy(_image);
+		Calculate_W_H();
+	}
+	Sprite(char* _image) {
+		if (_image == nullptr) { throw "Image for constructor Sprite was nullptr!"; }
+		image = _image;
+		Calculate_W_H();
+	}
+	void Calculate_W_H() {
 		int8_t i = 0, max_w = 0, max_h = 1;
-		for (const char* begin = _image; *begin != '\0'; begin++) { 
+		for (char* begin = image; *begin != '\0'; begin++) {
 			if (i > max_w && *begin != '\n') { max_w = i; }
-			if (*begin == '\n') { i = 0; max_h++; } 
-			i++; 
+			if (*begin == '\n') { i = 0; max_h++; }
+			i++;
 		}
 		w = max_w; h = max_h;
-		image = Strcpy(_image);
 	}
-	void ReadColors(const char* _colors) { colors = Strcpy(_colors); }
+	virtual void ReadColors(const char* _colors) { colors = Strcpy(_colors); }
 	void Draw() override{
 		Print();
 		for (int8_t n = 0, i = 0, j = 0; n < strlen(image); n++)
@@ -59,25 +67,52 @@ class Label : public Sprite {
 public:
 	char* text;
 	char border = '*';
+	Label(char* _text) : Sprite(_text), text(image) { }
 	Label(const char* _text) : Sprite(_text), text(image) { }
 	Label(const char* _text, char _border) : Sprite(_text), text(image), border(_border) { }
-	void Draw() override {
-		Sprite::Draw();
-		SetConsoleCursorPosition(hdl, { int16_t(x - 1), int16_t(y - 1) });
-		for (int8_t i = 0; i < w + 3; i++) { cout << border; }
-		SetConsoleCursorPosition(hdl, { int16_t(x - 1), int16_t(y + h) });
-		for (int8_t i = 0; i < w + 3; i++) { cout << border; }
-		for (int8_t i = 0; i < h; i++) {
-			SetConsoleCursorPosition(hdl, { int16_t(x - 1), int16_t(y + i) });	cout << border;
-			SetConsoleCursorPosition(hdl, { int16_t(x + w + 1), int16_t(y + i) });	cout << border;
+	void Draw() override {	
+		if (border != ' ') {
+			SetConsoleCursorPosition(hdl, { int16_t(x - 1), int16_t(y - 1) });
+			for (int8_t i = 0; i < w + 2; i++) { cout << border; }
+			SetConsoleCursorPosition(hdl, { int16_t(x - 1), int16_t(y + h) });
+			for (int8_t i = 0; i < w + 2; i++) { cout << border; }
+			for (int8_t i = 0; i < h; i++) {
+				SetConsoleCursorPosition(hdl, { int16_t(x - 1), int16_t(y + i) });	cout << border;
+				SetConsoleCursorPosition(hdl, { int16_t(x + w), int16_t(y + i) });	cout << border;
+			}
 		}
+		Sprite::Draw();
 	}
 };
-class Text : public Sprite {
+
+class Button : public Label {
 public:
-	char* text;
-	Text(const char* _text) : Sprite(_text), text(image) { }
-	void Draw() { Sprite::Draw(); }
+	char* tempcolors = nullptr;
+	char* colors2 = nullptr;
+	bool isPressed = false;
+	Button(const char* _text) : Label(_text){ }
+	void ReadColors(const char* _colors) override {
+		colors = new char[w * h];
+		colors2 = new char[w * h];
+		for (int i = 0; i < w*h; i++){ colors[i] = _colors[0]; colors2[i] = _colors[1]; }
+	}
+	void Draw() override {
+		if (isPressed) { 
+			tempcolors = colors; colors = colors2;
+			SetConsoleTextAttribute(hdl, colors2[0]);
+		}
+		else {
+			if (tempcolors != nullptr) { colors = tempcolors; }
+			SetConsoleTextAttribute(hdl, colors[0]);
+		}
+		Label::Draw();
+	}
+};
+
+class Text : public Label {
+public:
+	Text(const char* _text) : Label(_text) { border = ' '; }
+	Text(char* _text) : Label(_text) { border = ' '; }
 };
 
 class Area : public Element {
@@ -109,6 +144,42 @@ public:
 		Text element(_text);
 		element.Move(x + 1, y + 1 + posy);
 		element.Draw();
-		posy += element.h;
+		posy += element.h + 1;
+	}
+};
+
+class PanelGorizontal : public Area {
+private:
+	int8_t posx;
+public:
+	list<char*> labels;
+	PanelGorizontal(int8_t _x, int8_t _y, int8_t _w, int8_t _h) : Area(_w, _h, ' ', full_symbol), posx(0), labels() { Move(_x, _y); }
+	void Append(const char* _text) {
+		labels.push_back(Strcpy(_text));
+		Text element(_text);
+		element.Move(x + 1 + posx, y + 1 );
+		element.Draw();
+		posx += element.w + 1;
+	}
+};
+#ifndef item_size
+#define item_size 3
+#endif // !item_size
+
+class Table {
+public:
+	list<PanelGorizontal> rows;
+	Table(int8_t _x, int8_t _y, int8_t _rows, int8_t _columns) {
+		for (int j = 0; j < _rows; j++)
+		{
+			PanelGorizontal row(_x, _y + item_size * j, item_size * _columns, item_size);
+			rows.push_back(row);
+			for (int i = 0; i < _columns; i++)
+			{
+				Label empty("...\n...\n...", full_symbol);
+				empty.Move(_x + (item_size + 1) * i, _y + (item_size + 1) * j);
+				empty.Draw();
+			}
+		}
 	}
 };
