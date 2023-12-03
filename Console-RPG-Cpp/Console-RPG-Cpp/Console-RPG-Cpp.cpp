@@ -23,7 +23,7 @@ int main()
             s.sprite->ReadColors(" \"\"\" \",\"\",\"\",D\"   D");
             l1.add(s);
         }
-       
+        l1.WriteToFile("E:/saves/file.bin");
         SetConsoleTextAttribute(hdl, 7);
         Table r(100, 1, 6, 5);
         

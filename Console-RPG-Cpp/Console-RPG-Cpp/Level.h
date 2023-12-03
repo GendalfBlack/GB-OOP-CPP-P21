@@ -1,5 +1,6 @@
-#pragma once
+﻿#pragma once
 #include <vector>
+#include <fstream>
 
 class gameObject {
 public:
@@ -8,6 +9,21 @@ public:
 	Sprite* sprite;
 	gameObject(int16_t x, int16_t y) : g_x(x), g_y(y), sprite(nullptr){}
 	gameObject(int16_t x, int16_t y, const char* text) : g_x(x), g_y(y), sprite(new Sprite(text)){}
+	char* toString() {
+		char* line = new char[64];
+		line[0] = g_x >> 8; line[1] = g_x; line[2] = g_y >> 8; line[3] = g_y;
+		line[4] = sprite->x; line[5] = sprite->y; 
+		line[6] = sprite->w; line[7] = sprite->h;
+		for (int i = 0; i < strlen(sprite->image); i++)	{
+			line[8 + i] = sprite->image[i];
+		}
+		for (int i = 0; i < strlen(sprite->colors); i++) {
+			line[8 + strlen(sprite->image) + i] = sprite->colors[i];
+		}
+		line[63] = '\14';
+		return line;
+	}
+	operator char*() { return toString(); }
 };
 
 class Level {
@@ -38,4 +54,12 @@ public:
 	}
 
 	void add(const gameObject& object) { objects.push_back(object); }
+
+	void WriteToFile(const char* path) {
+		ofstream file;
+		file.open(path, ofstream::out | ios::binary);
+		for (auto object : objects)	{ file.write(object, 128); }
+		file.close();
+	}
+
 };

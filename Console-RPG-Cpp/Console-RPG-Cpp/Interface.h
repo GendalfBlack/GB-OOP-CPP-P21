@@ -18,7 +18,6 @@ public:
 	int8_t y;
 	int8_t w;
 	int8_t h;
-	int8_t order;
 	void Print() { SetConsoleCursorPosition(hdl, { x, y });	}
 	virtual void Draw() { throw "Calling virtual method Draw() from \"Element\""; }
 	void Move(int8_t _x, int8_t _y) { x = _x; y = _y; }
