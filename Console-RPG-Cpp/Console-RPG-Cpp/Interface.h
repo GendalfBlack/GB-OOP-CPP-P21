@@ -3,7 +3,7 @@
 #define full_symbol '\333' 
 auto hdl = GetStdHandle(STD_OUTPUT_HANDLE);
 
-char* Strcpy(const char* static_text) {
+char* Strcpy(const const char*& static_text) {
 	int8_t i = 0, size = 0;
 	for (const char* begin = static_text; *begin != '\0'; begin++) { size++; } 
 	char* heap_text = new char[size + 1];

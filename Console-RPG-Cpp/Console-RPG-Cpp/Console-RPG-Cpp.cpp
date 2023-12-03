@@ -1,4 +1,5 @@
 ﻿#include <iostream>
+#include <conio.h>
 #include "Headers.h"
 
 int main()
@@ -9,37 +10,51 @@ int main()
         Area a1(99, 24, ' ', full_symbol);
         a1.Move(0, 0);
         a1.Draw();
-        for (int8_t i = 0; i < 10; i++)
+        Level l1(10, 10);
+        for (int16_t i = 0; i < 1000; i++)
         {
-            Sprite s3(",,,");
-            s3.ReadColors("***");
-            s3.Move(rand() % 91 + 3, rand() % 15 + 2);
-            s3.Draw();
-            Sprite s2(" ***\n**|**");
-            s2.ReadColors(" \42\42\42 \42\42\44\42\42");
-            s2.Move(rand() % 91 + 2, rand() % 15 + 5);
-            s2.Draw();
-            Sprite s(" ***\n*****\n *|*\n  |");
-            s.ReadColors(" \"\"\" \",\"\",\"\",D\"   D");
-            s.Move(rand() % 91 + 6, rand() % 15 + 6);
-            s.Draw();
+            gameObject s3(rand() % (l1.width - 3) + 2, rand() % l1.height + 2, ",,,");
+            s3.sprite->ReadColors("\12\12\12");
+            l1.add(s3);
+            gameObject s2(rand() % (l1.width - 5) + 4, rand() % (l1.height - 2) + 5, " ###\n##|##");
+            s2.sprite->ReadColors(" \12\12\12 \12\12\44\12\12");
+            l1.add(s2);
+            gameObject s(rand() % (l1.width - 5) + 6, rand() % (l1.height - 3) + 6, " ***\n*****\n *|*\n  |");
+            s.sprite->ReadColors(" \"\"\" \",\"\",\"\",D\"   D");
+            l1.add(s);
         }
+       
         SetConsoleTextAttribute(hdl, 7);
         Table r(100, 1, 6, 5);
-        SetConsoleCursorPosition(hdl, { 0, 29 });
-        system("pause");
+        
+        int input = 0;
+        while (true) {
+            SetConsoleTextAttribute(hdl, 7);
+            a1.Draw();
+            l1.drawAll();
+            SetConsoleTextAttribute(hdl, 7);
+            SetConsoleCursorPosition(hdl, { 0, 29 });
+            input = _getch();
+            switch (input)
+            {
+            case 72: cout << "up      "; 
+                l1.screen_y -= l1.screen_y - l1.screen_height < 0 ? 0 : l1.screen_height;       break;
+            case 77: cout << "right   "; 
+                l1.screen_x += l1.screen_x + l1.screen_width >= l1.width ? 0 : l1.screen_width;  break;
+            case 80: cout << "down    "; 
+                l1.screen_y += l1.screen_y + l1.screen_height >= l1.height ? 0 : l1.screen_height;   break;
+            case 75: cout << "left    "; 
+                l1.screen_x -= l1.screen_x - l1.screen_width < 0 ? 0 : l1.screen_width;    break;
+            default: break;
+            }
+            cout << l1.screen_x << ' ' << l1.screen_y << "     ";
+        }
     }
     catch (const char* error)
     {
         cout << "Error:" << error;
     }
 /*  
-    Задача 4. Реалізувати клас Level. Зробити Area* щоб в ньому відображати
-    спрайти. В ньому зробити массив спрайтів що є на рівні, та реалізувати 
-    методи додавання спрайтів. Метод має приймати Sprite* та запам'ятовувати їх.
-    Реалізувати Draw() в якому буде викликано кожен спрайт і намальовані всі 
-    з 0 (Тобто викликати system("cls") та відобразити Area і всі спрайти масиву)
-        
     Задача 6. Реалізувати клас Chest. У якого будуте масив Items* і Area* де його виводить
     Зробити Draw щоб спочатку виводилась Area а потім всі Items*, але коодринати Items
     мають вважати за початок координат не точку 0,0 а координати Area.
