@@ -5,7 +5,7 @@ public:
 	NPC(int32_t _x, int32_t _y, const char* _name, const char* _sprite, int16_t _max_hp) {
 		sprite = new Sprite*;
 		x = _x;  y = _y;
-		name = Strcpy(_name);
+		name = MyFunctions::strcpy(_name);
 		*sprite = new Sprite(_sprite);
 		max_hp = _max_hp;
 		hp = _max_hp;

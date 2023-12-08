@@ -9,8 +9,9 @@ int main()
         srand(time(0));
         Area a1(99, 24, ' ', full_symbol);
         a1.Move(0, 0);
-        a1.Draw();
+        a1.Draw(); 
         Level l1(10, 10);
+        /*
         for (int16_t i = 0; i < 1000; i++)
         {
             gameObject s3(rand() % (l1.width - 3) + 2, rand() % l1.height + 2, ",,,");
@@ -24,6 +25,9 @@ int main()
             l1.add(s);
         }
         l1.WriteToFile("E:/saves/file.bin");
+        */
+        
+        l1.ReadFromFile("E:/saves/file.bin");
         SetConsoleTextAttribute(hdl, 7);
         Table r(100, 1, 6, 5);
         

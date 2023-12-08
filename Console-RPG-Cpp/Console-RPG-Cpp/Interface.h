@@ -3,14 +3,17 @@
 #define full_symbol '\333' 
 auto hdl = GetStdHandle(STD_OUTPUT_HANDLE);
 
-char* Strcpy(const const char*& static_text) {
-	int8_t i = 0, size = 0;
-	for (const char* begin = static_text; *begin != '\0'; begin++) { size++; } 
-	char* heap_text = new char[size + 1];
-	for (const char* begin = static_text; *begin != '\0'; begin++) { heap_text[i] = *begin; i++; }	
-	heap_text[i] = '\0';
-	return heap_text;
-}
+namespace MyFunctions {
+	char* strcpy(const const char*& static_text) {
+		int8_t i = 0, size = 0;
+		for (const char* begin = static_text; *begin != '\0'; begin++) { size++; } 
+		char* heap_text = new char[size + 1];
+		for (const char* begin = static_text; *begin != '\0'; begin++) { heap_text[i] = *begin; i++; }	
+		heap_text[i] = '\0';
+		return heap_text;
+	}
+};
+
 
 class Element {
 public:
@@ -27,9 +30,10 @@ class Sprite : public Element {
 public:
 	char* image;
 	char* colors = nullptr;
+	Sprite(): image(nullptr){ }
 	Sprite(const char* _image) {
 		if (_image == nullptr) { throw "Image for constructor Sprite was nullptr!"; }
-		image = Strcpy(_image);
+		image = MyFunctions::strcpy(_image);
 		Calculate_W_H();
 	}
 	Sprite(char* _image) {
@@ -46,7 +50,7 @@ public:
 		}
 		w = max_w; h = max_h;
 	}
-	virtual void ReadColors(const char* _colors) { colors = Strcpy(_colors); }
+	virtual void ReadColors(const char* _colors) { colors = MyFunctions::strcpy(_colors); }
 	void Draw() override{
 		Print();
 		for (int8_t n = 0, i = 0, j = 0; n < strlen(image); n++)
@@ -139,7 +143,7 @@ public:
 	list<char*> labels;
 	PanelVertical(int8_t _x, int8_t _y, int8_t _w, int8_t _h) : Area(_w, _h, ' ', full_symbol), posy(0), labels() { Move(_x, _y); }
 	void Append(const char* _text) {
-		labels.push_back(Strcpy(_text));
+		labels.push_back(MyFunctions::strcpy(_text));
 		Text element(_text);
 		element.Move(x + 1, y + 1 + posy);
 		element.Draw();
@@ -154,7 +158,7 @@ public:
 	list<char*> labels;
 	PanelGorizontal(int8_t _x, int8_t _y, int8_t _w, int8_t _h) : Area(_w, _h, ' ', full_symbol), posx(0), labels() { Move(_x, _y); }
 	void Append(const char* _text) {
-		labels.push_back(Strcpy(_text));
+		labels.push_back(MyFunctions::strcpy(_text));
 		Text element(_text);
 		element.Move(x + 1 + posx, y + 1 );
 		element.Draw();
