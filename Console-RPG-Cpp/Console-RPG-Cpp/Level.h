@@ -4,8 +4,8 @@
 
 class gameObject {
 public:
-	int16_t g_x;
-	int16_t g_y;
+	uint16_t g_x;
+	uint16_t g_y;
 	Sprite* sprite;
 	gameObject() : g_x(0), g_y(0), sprite(new Sprite){}
 	gameObject(int16_t x, int16_t y) : g_x(x), g_y(y), sprite(nullptr) {}
@@ -24,43 +24,47 @@ public:
 		line[63] = '\14';
 		return line;
 	}
-	friend static ostream& operator<<(ostream& os, const gameObject& go);
-	friend static ostream& operator>>(ostream& os, const gameObject& go);
+	friend static ofstream& operator<<(ofstream& os, const gameObject& go);
+	friend static ifstream& operator>>(ifstream& os, gameObject& go);
 	explicit operator char* () { return toString(); }
 };
 
-ostream& operator<<(ostream& os, const gameObject& go) {
+ofstream& operator<<(ofstream& os, const gameObject& go) {
 	os << (uint8_t)(go.g_x >> 8);
 	os << (uint8_t)go.g_x;
 	os << (uint8_t)(go.g_y >> 8);
 	os << (uint8_t)go.g_y;
 	os << go.sprite->w;
 	os << go.sprite->h;
-	os << go.sprite->image;
-	os << go.sprite->colors;
+	byte length = (go.sprite->w + 1) * go.sprite->h;
+	for (int i = 0; i < length; i++) { os << go.sprite->image[i]; }
+	for (int i = 0; i < length; i++) { os << go.sprite->colors[i]; }
 	return os;
 }
 
-istream& operator>>(istream& os, gameObject& go) {
-	uint8_t x1, x2; os >> x1; os >> x2; go.g_x = (x1 << 8) + x2;
-	uint8_t y1, y2; os >> y1; os >> y2; go.g_y = (y1 << 8) + y2;
-	uint8_t w; os >> w; go.sprite->w = w;
-	uint8_t h; os >> h; go.sprite->h = h;
-	char* image = new char[(go.sprite->w + 1) * go.sprite->h];
-	char* colors = new char[(go.sprite->w + 1) * go.sprite->h];
-	go.sprite->image = image; os >> go.sprite->image;
-	go.sprite->colors = colors; os >> go.sprite->colors;
+ifstream& operator>>(ifstream& os, gameObject& go) {
+	char x1, x2; os.read(&x1, 1); os.read(&x2, 1); go.g_x |= x1; go.g_x <<= 8; go.g_x |= x2;
+	char y1, y2; os.read(&y1, 1); os.read(&y2, 1); go.g_y |= y1; go.g_y <<= 8; go.g_y |= y2;
+	char w; os.read(&w, 1); go.sprite->w = w;
+	char h; os.read(&h, 1); go.sprite->h = h;
+	byte length = (go.sprite->w + 1) * go.sprite->h;
+	char* image = new char[length]; go.sprite->image = image;
+	char* colors = new char[length]; go.sprite->colors = colors;
+	os.read(go.sprite->image, length);
+	os.read(go.sprite->colors, length);
+	go.sprite->image[length] = '\0';
+	go.sprite->colors[length] = '\0';
 	return os;
 }
 
 class Level {
 public:
-	int16_t width;
-	int16_t height;
-	int8_t screen_width = 99;
-	int8_t screen_height = 24;
-	int16_t screen_x = 0;
-	int16_t screen_y = 0;
+	uint16_t width;
+	uint16_t height;
+	uint8_t screen_width = 99;
+	uint8_t screen_height = 24;
+	uint16_t screen_x = 0;
+	uint16_t screen_y = 0;
 
 	vector<gameObject> objects;
 	Level(int16_t w, int16_t h) : objects() { 
@@ -92,7 +96,7 @@ public:
 		ifstream file;
 		file.open(path, ifstream::in | ios::binary);
 		while (!file.eof()) { 
-			gameObject p_go; file >> p_go; 
+			gameObject p_go; file >> p_go;
 			objects.push_back(p_go); 
 		}
 		file.close();
