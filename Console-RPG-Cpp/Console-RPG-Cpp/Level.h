@@ -30,10 +30,10 @@ public:
 };
 
 ofstream& operator<<(ofstream& os, const gameObject& go) {
-	os << (uint8_t)(go.g_x >> 8);
-	os << (uint8_t)go.g_x;
-	os << (uint8_t)(go.g_y >> 8);
-	os << (uint8_t)go.g_y;
+	byte gx1 = go.g_x >> 8; os.write((char*)&gx1, 1);
+	byte gx2 = go.g_x;		os.write((char*)&gx2, 1);
+	byte gy1 = go.g_y >> 8; os.write((char*)&gy1, 1);
+	byte gy2 = go.g_y;		os.write((char*)&gy2, 1);
 	os << go.sprite->w;
 	os << go.sprite->h;
 	byte length = (go.sprite->w + 1) * go.sprite->h;
@@ -43,8 +43,8 @@ ofstream& operator<<(ofstream& os, const gameObject& go) {
 }
 
 ifstream& operator>>(ifstream& os, gameObject& go) {
-	char x1, x2; os.read(&x1, 1); os.read(&x2, 1); go.g_x |= x1; go.g_x <<= 8; go.g_x |= x2;
-	char y1, y2; os.read(&y1, 1); os.read(&y2, 1); go.g_y |= y1; go.g_y <<= 8; go.g_y |= y2;
+	byte x1, x2; os.read((char*)&x1, 1); os.read((char*)&x2, 1); go.g_x |= x1; go.g_x <<= 8; go.g_x |= x2;
+	byte y1, y2; os.read((char*)&y1, 1); os.read((char*)&y2, 1); go.g_y |= y1; go.g_y <<= 8; go.g_y |= y2;
 	char w; os.read(&w, 1); go.sprite->w = w;
 	char h; os.read(&h, 1); go.sprite->h = h;
 	byte length = (go.sprite->w + 1) * go.sprite->h;
