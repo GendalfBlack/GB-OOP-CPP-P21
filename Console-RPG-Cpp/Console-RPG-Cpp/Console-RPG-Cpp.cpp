@@ -7,12 +7,13 @@ int main()
     try
     {
         srand(time(0));
+        // Зробити меню де дається вибір чи завантажувати інформацію з файлу на диску, чи створювати новий "рівень"
         Area a1(99, 24, ' ', full_symbol);
         a1.Move(0, 0);
         a1.Draw(); 
         Level l1(10, 10);
         
-        /*for (int16_t i = 0; i < 1000; i++)
+        for (int16_t i = 0; i < 1000; i++)
         {
             gameObject s3(rand() % (l1.width - 3) + 2, rand() % l1.height + 2, ",,,");
             s3.sprite->ReadColors("\12\12\12");
@@ -24,10 +25,10 @@ int main()
             s.sprite->ReadColors(" \"\"\" \",\"\",\"\",D\"   D");
             l1.add(s);
         }
-        l1.WriteToFile("E:/saves/file.bin");*/
+        l1.WriteToFile("E:/saves/file.bin");
         
-        
-        l1.ReadFromFile("E:/saves/file.bin");
+        /*
+        l1.ReadFromFile("E:/saves/file.bin");*/
         SetConsoleTextAttribute(hdl, 7);
         Table r(100, 1, 6, 5);
         
