@@ -4,18 +4,6 @@
 #define full_symbol '\333' 
 auto hdl = GetStdHandle(STD_OUTPUT_HANDLE);
 
-namespace MyFunctions {
-	char* strcpy(const const char*& static_text) {
-		int8_t i = 0, size = 0;
-		for (const char* begin = static_text; *begin != '\0'; begin++) { size++; } 
-		char* heap_text = new char[size + 1];
-		for (const char* begin = static_text; *begin != '\0'; begin++) { heap_text[i] = *begin; i++; }	
-		heap_text[i] = '\0';
-		return heap_text;
-	}
-};
-
-
 class Element {
 public:
 	int8_t x;
