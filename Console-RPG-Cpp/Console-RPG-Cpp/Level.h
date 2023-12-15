@@ -9,24 +9,21 @@ public:
 	Sprite* sprite;
 	gameObject() : g_x(0), g_y(0), sprite(new Sprite){}
 	gameObject(int16_t x, int16_t y) : g_x(x), g_y(y), sprite(nullptr) {}
-	gameObject(int16_t x, int16_t y, const char* text) : g_x(x), g_y(y), sprite(new Sprite(text)) {}
-	char* toString() {
-		char* line = new char[64];
-		line[0] = g_x >> 8; line[1] = g_x; line[2] = g_y >> 8; line[3] = g_y;
-		line[4] = sprite->x; line[5] = sprite->y;
-		line[6] = sprite->w; line[7] = sprite->h;
-		for (int i = 0; i < strlen(sprite->image); i++) {
-			line[8 + i] = sprite->image[i];
-		}
-		for (int i = 0; i < strlen(sprite->colors); i++) {
-			line[8 + strlen(sprite->image) + i] = sprite->colors[i];
-		}
-		line[63] = '\14';
+	gameObject(int16_t x, int16_t y, string text) : g_x(x), g_y(y), sprite(new Sprite(text)) {}
+	string toString() {
+		string line;
+		line.push_back(g_x >> 8); line.push_back(g_x); 
+		line.push_back(g_y >> 8); line.push_back(g_y);
+		line.push_back(sprite->x); line.push_back(sprite->y);
+		line.push_back(sprite->w); line.push_back(sprite->h);
+		for (int i = 0; i < sprite->image.size(); i++) { line.push_back(sprite->image[i]); }
+		for (int i = 0; i < sprite->colors.size(); i++) { line.push_back(sprite->colors[i]); }
+		line.push_back('\14');
 		return line;
 	}
 	friend static ofstream& operator<<(ofstream& os, const gameObject& go);
 	friend static ifstream& operator>>(ifstream& os, gameObject& go);
-	explicit operator char* () { return toString(); }
+	explicit operator string () { return toString(); }
 };
 
 ofstream& operator<<(ofstream& os, const gameObject& go) {
@@ -36,7 +33,7 @@ ofstream& operator<<(ofstream& os, const gameObject& go) {
 	byte gy2 = go.g_y;		os.write((char*)&gy2, 1);
 	os << go.sprite->w;
 	os << go.sprite->h;
-	byte length = (go.sprite->w + 1) * go.sprite->h;
+	byte length = go.sprite->w * go.sprite->h;
 	for (int i = 0; i < length; i++) { os << go.sprite->image[i]; }
 	for (int i = 0; i < length; i++) { os << go.sprite->colors[i]; }
 	return os;
@@ -48,12 +45,14 @@ ifstream& operator>>(ifstream& os, gameObject& go) {
 	char w; os.read(&w, 1); go.sprite->w = w;
 	char h; os.read(&h, 1); go.sprite->h = h;
 	byte length = (go.sprite->w + 1) * go.sprite->h;
-	char* image = new char[length]; go.sprite->image = image;
-	char* colors = new char[length]; go.sprite->colors = colors;
-	os.read(go.sprite->image, length);
-	os.read(go.sprite->colors, length);
-	go.sprite->image[length] = '\0';
-	go.sprite->colors[length] = '\0';
+	char* image = new char[length]; 
+	char* colors = new char[length]; 
+	os.read(image, length);
+	os.read(colors, length);
+	for (int i = 0; i < length; i++) { go.sprite->image.push_back(image[0]); }
+	for (int i = 0; i < length; i++) { go.sprite->colors.push_back(colors[0]); }
+	go.sprite->image.push_back('\0');
+	go.sprite->colors.push_back('\0');
 	return os;
 }
 
@@ -93,8 +92,8 @@ public:
 	void ReadFromFile(const char* path) {
 		ifstream file;
 		file.open(path, ifstream::in | ios::binary);
+		file >> *this;
 		while (!file.eof()) { 
-			file >> *this;
 			gameObject p_go; file >> p_go;
 			objects.push_back(p_go); 
 		}

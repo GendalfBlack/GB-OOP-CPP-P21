@@ -26,9 +26,15 @@ int main()
             l1.add(s);
         }
         l1.WriteToFile("E:/saves/file.bin");
-        
         /*
-        l1.ReadFromFile("E:/saves/file.bin");*/
+        Player p(10, 10, "Pedro", " o\n-+-\n ^", 200);
+        p.sprite->ReadColors(" \1 \1\1\1  \1");
+        p.sprite->Move(10, 10);*/
+        Player p;
+        p.ReadFromFile("E:/saves/pedro.bin");
+        p.sprite->Move(10, 10);
+
+        //l1.ReadFromFile("E:/saves/file.bin");
         SetConsoleTextAttribute(hdl, 7);
         Table r(100, 1, 6, 5);
         
